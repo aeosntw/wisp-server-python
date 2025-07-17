@@ -41,9 +41,7 @@ async def static_handler(path, request_headers):
   if "Upgrade" in request_headers:
     return
     
-  response_headers = [
-    ("Server", f"wisp-server-python v{wisp.version}")
-  ]
+  response_headers = []
   target_path = static_path / path[1:]
 
   if target_path.is_dir():
@@ -74,6 +72,17 @@ async def main(args):
     ratelimit.connections_limit = int(args.connections)
     ratelimit.bandwidth_limit = float(args.bandwidth)
     ratelimit.window_size = float(args.window)
+  
+  if args.proxy:
+    if args.proxy.startswith("socks5h:"):
+      net.proxy_url = args.proxy.replace("socks5h:", "socks5:", 1)
+      net.proxy_dns = True
+    elif args.proxy.startswith("socks4a:"):
+      net.proxy_url = args.proxy.replace("socks4a:", "socks4:", 1)
+      net.proxy_dns = True
+    else:
+      net.proxy_url = args.proxy
+      net.proxy_dns = False
 
   net.block_loopback = not args.allow_loopback
   net.block_private = not args.allow_private
@@ -83,6 +92,11 @@ async def main(args):
   ws_logger.setLevel(logging.WARN)
 
   reuse_port = net.reuse_port_supported()
+  server_header = f"wisp-server-python v{wisp.version}"
 
-  async with serve(connection_handler, args.host, int(args.port), reuse_port=reuse_port, process_request=request_handler, compression=None):
+  async with serve(
+    connection_handler, args.host, int(args.port), 
+    reuse_port=reuse_port, process_request=request_handler, 
+    compression=None, server_header=server_header
+  ):
     await asyncio.Future()

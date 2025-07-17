@@ -1,7 +1,9 @@
-import asyncudp
 import asyncio
 import socket
 import ipaddress
+
+import asyncudp
+from python_socks.async_.asyncio import Proxy
 
 #various network utilities and wrappers
 
@@ -9,8 +11,18 @@ tcp_size = 64*1024
 block_loopback = False
 block_private = False
 
+proxy_url = None
+proxy_dns = False
+
 def reuse_port_supported():
   return hasattr(socket, "SO_REUSEPORT")
+
+def is_ip(addr_str):
+  try:
+    ipaddress.ip_address(addr_str)
+    return True
+  except:
+    return False
 
 def get_ip(host, port, stream_type):
   if stream_type == 0x01:
@@ -24,7 +36,7 @@ async def get_ip_async(host, port, stream_type):
   loop = asyncio.get_running_loop()
   return await loop.run_in_executor(None, get_ip, host, port, stream_type)
 
-def validate_ip(addr_str):
+def validate_ip(addr_str):  
   ip_addr = ipaddress.ip_address(addr_str)
   if block_loopback and ip_addr.is_loopback:
     raise TypeError("Connection to loopback ip address blocked.")
@@ -32,9 +44,15 @@ def validate_ip(addr_str):
     raise TypeError("Connection to private ip address blocked.")
 
 async def validate_hostname(host, port, stream_type):
-  addr_str = await get_ip_async(host, port, stream_type)
-  validate_ip(addr_str)
-  return addr_str
+  if is_ip(host):
+    return validate_ip(host)
+  #don't do a dns lookup when we're on a proxy and using remote dns
+  elif proxy_url and proxy_dns:
+    return None
+  else:  
+    addr_str = await get_ip_async(host, port, stream_type)
+    validate_ip(addr_str)
+    return addr_str
 
 class TCPConnection:
   def __init__(self, hostname, port):
@@ -45,7 +63,20 @@ class TCPConnection:
   
   async def connect(self):
     addr_str = await validate_hostname(self.hostname, self.port, 0x01)
-    self.tcp_reader, self.tcp_writer = await asyncio.open_connection(host=addr_str, port=self.port, limit=tcp_size)
+    if proxy_url:
+      proxy = Proxy.from_url(proxy_url, rdns=proxy_dns)
+      proxy_dest = self.hostname if proxy_dns else addr_str
+      sock = await proxy.connect(dest_host=proxy_dest, dest_port=self.port)
+      self.tcp_reader, self.tcp_writer = await asyncio.open_connection(
+        limit=tcp_size, 
+        sock=sock
+      )
+    else:
+      self.tcp_reader, self.tcp_writer = await asyncio.open_connection(
+        host=addr_str, 
+        port=self.port,
+        limit=tcp_size,
+      )
   
   async def recv(self):
     return await self.tcp_reader.read(tcp_size)
@@ -68,6 +99,8 @@ class UDPConnection:
     self.socket = None
   
   async def connect(self):
+    if proxy_url:
+      raise NotImplementedError("SOCKS/HTTP proxy is not supported for UDP.")
     addr_str = await validate_hostname(self.hostname, self.port, 0x02)
     self.socket = await asyncudp.create_socket(remote_addr=(addr_str, self.port))
   

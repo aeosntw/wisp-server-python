@@ -46,7 +46,8 @@ def main():
   parser.add_argument("--allow-loopback", action="store_true", help="Allow connections to loopback IP addresses.")
   parser.add_argument("--allow-private", action="store_true", help="Allow connections to private IP addresses.")
   parser.add_argument("--log-level", default="info", help="The log level (either debug, info, warning, error, or critical).")
-  parser.add_argument("--threads", default=0, help="The number of threads to run the server on. By default it uses all CPU cores.")
+  parser.add_argument("--threads", default=0, help="The number of threads to run the server on. By default it uses all CPU cores. (Linux only)")
+  parser.add_argument("--proxy", default=None, help="The url of the socks5h, socks5, sock4a, socks4 or http proxy to use.")
   args = parser.parse_args()
 
   logging.basicConfig(
@@ -61,6 +62,8 @@ def main():
     logging.info(f"serving static files from {static_path}")
   if args.limits:
     logging.info("enabled rate limits")
+  if args.proxy:
+    logging.info(f"proxy enabled: {args.proxy}")
   logging.info(f"listening on {args.host}:{args.port}")
 
   threads = int(args.threads)

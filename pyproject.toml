@@ -11,7 +11,7 @@ package-dir = {"" = "src"}
 
 [project]
 name = "wisp-python"
-version = "0.7.0"
+version = "0.8.0"
 authors = [
   {name="ading2210"},
 ]
@@ -26,6 +26,7 @@ classifiers = [
 dependencies = [
   "websockets",
   "asyncudp",
+  "python-socks[asyncio]",
   "uvloop; sys_platform != 'win32' and sys_platform != 'cygwin'"
 ]
 

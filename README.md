@@ -20,14 +20,12 @@ pip3 install wisp-python
 ## Running the Server:
 For the best performance use [CPython](https://github.com/python/cpython) 3.11 or newer. [PyPy](https://github.com/pypy/pypy) is not recommended as it is a lot slower than CPython here. 
 
-There used to be an experimental "threading" variant of the server. This has been removed due to its instability and difficulty of maintenance.
-
 To start the server, run `python3 -m wisp.server`. The program accepts the following arguments:
 ```
-usage: wisp-server-python [-h] [--host HOST] [--port PORT] [--static STATIC] [--limits] [--bandwidth BANDWIDTH] [--connections CONNECTIONS] [--window WINDOW] [--allow-loopback]
-                          [--allow-private] [--log-level LOG_LEVEL] [--threads THREADS]
+usage: wisp-server-python [-h] [--host HOST] [--port PORT] [--static STATIC] [--limits] [--bandwidth BANDWIDTH] [--connections CONNECTIONS] [--window WINDOW] [--allow-loopback] [--allow-private]
+                          [--log-level LOG_LEVEL] [--threads THREADS] [--proxy PROXY]
 
-A Wisp server implementation, written in Python (v0.7.0)
+A Wisp server implementation, written in Python (v0.8.0)
 
 options:
   -h, --help            show this help message and exit
@@ -44,7 +42,8 @@ options:
   --allow-private       Allow connections to private IP addresses.
   --log-level LOG_LEVEL
                         The log level (either debug, info, warning, error, or critical).
-  --threads THREADS     The number of threads to run the server on. By default it uses all CPU cores.
+  --threads THREADS     The number of threads to run the server on. By default it uses all CPU cores. (Linux only)
+  --proxy PROXY         The url of the socks5h, socks5, sock4a, socks4 or http proxy to use.
 ```
 
 ## Roadmap:
@@ -57,10 +56,12 @@ options:
 ## Copyright:
 This repository is licensed under the GNU AGPL v3.
 
+A few third party libraries are used. See [`LICENSE_third_party.md`](https://github.com/MercuryWorkshop/wisp-server-python/blob/main/LICENSE_third_party.md).
+
 ### Copyright Notice:
 ```
 wisp-server-python: a Wisp server implementation written in Python
-Copyright (C) 2024 Mercury Workshop
+Copyright (C) 2025 Mercury Workshop
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
