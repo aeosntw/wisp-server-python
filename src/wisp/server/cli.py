@@ -48,6 +48,8 @@ def main():
   parser.add_argument("--log-level", default="info", help="The log level (either debug, info, warning, error, or critical).")
   parser.add_argument("--threads", default=0, help="The number of threads to run the server on. By default it uses all CPU cores. (Linux only)")
   parser.add_argument("--proxy", default=None, help="The url of the socks5h, socks5, sock4a, socks4 or http proxy to use.")
+  parser.add_argument("--block-udp", action="store_true", help="Block UDP streams.")
+  parser.add_argument("--block-tcp", action="store_true", help="Block TCP streams.")
   args = parser.parse_args()
 
   logging.basicConfig(

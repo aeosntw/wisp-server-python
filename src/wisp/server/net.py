@@ -10,6 +10,8 @@ from python_socks.async_.asyncio import Proxy
 tcp_size = 64*1024
 block_loopback = False
 block_private = False
+block_udp = False
+block_tcp = False
 
 proxy_url = None
 proxy_dns = False
@@ -62,6 +64,9 @@ class TCPConnection:
     self.tcp_reader = None
   
   async def connect(self):
+    if block_tcp:
+      raise TypeError("TCP connection blocked.")
+
     addr_str = await validate_hostname(self.hostname, self.port, 0x01)
     if proxy_url:
       proxy = Proxy.from_url(proxy_url, rdns=proxy_dns)
@@ -99,8 +104,11 @@ class UDPConnection:
     self.socket = None
   
   async def connect(self):
+    if block_udp:
+      raise TypeError("UDP connection blocked.")
     if proxy_url:
       raise NotImplementedError("SOCKS/HTTP proxy is not supported for UDP.")
+
     addr_str = await validate_hostname(self.hostname, self.port, 0x02)
     self.socket = await asyncudp.create_socket(remote_addr=(addr_str, self.port))
   

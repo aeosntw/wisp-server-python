@@ -86,6 +86,8 @@ async def main(args):
 
   net.block_loopback = not args.allow_loopback
   net.block_private = not args.allow_private
+  net.block_udp = args.block_udp
+  net.block_tcp = args.block_tcp
       
   limit_task = asyncio.create_task(ratelimit.reset_limits_timer())
   ws_logger = logging.getLogger("websockets")
