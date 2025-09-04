@@ -47,7 +47,8 @@ def validate_ip(addr_str):
 
 async def validate_hostname(host, port, stream_type):
   if is_ip(host):
-    return validate_ip(host)
+    validate_ip(host)
+    return host
   #don't do a dns lookup when we're on a proxy and using remote dns
   elif proxy_url and proxy_dns:
     return None
