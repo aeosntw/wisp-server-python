@@ -118,8 +118,8 @@ class WispConnection:
         
   async def stream_ws_to_tcp(self, stream_id):
     #this infinite loop should get killed by the task.cancel call later on
+    stream = self.active_streams[stream_id]
     while True: 
-      stream = self.active_streams[stream_id]
       data = await stream["queue"].get()
       try:
         await stream["conn"].send(data)
@@ -135,8 +135,8 @@ class WispConnection:
         await self.ws.send(continue_packet)
   
   async def stream_tcp_to_ws(self, stream_id):
+    stream = self.active_streams[stream_id]
     while True:
-      stream = self.active_streams[stream_id]
       try:
         data = await stream["conn"].recv()
       except Exception as e:
