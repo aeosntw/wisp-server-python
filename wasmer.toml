@@ -1,1 +1,9 @@
-command = "pip install . --no-deps"
+[build]
+command = "pip install . --no-cache-dir"
+
+[package]
+entrypoint = "start"
+
+[[command]]
+name = "start"
+command = ["wisp"] 
