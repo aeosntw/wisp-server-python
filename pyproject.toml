@@ -9,6 +9,9 @@ build-backend = "setuptools.build_meta"
 packages = ["wisp", "wisp.server"]
 package-dir = {"" = "src"}
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [project]
 name = "wisp-python"
 version = "0.8.3"
