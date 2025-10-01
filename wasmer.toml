@@ -1,1 +1,1 @@
-
+command = "pip install . --no-deps"
