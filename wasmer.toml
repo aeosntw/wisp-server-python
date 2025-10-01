@@ -1,5 +1,5 @@
 [build]
-command = "pip install . --no-cache-dir"
+command = "pip install . --no-cache-dir && chmod -R +x src/wisp"
 
 [package]
 entrypoint = "start"
