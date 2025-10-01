@@ -1,0 +1,2 @@
+[build]
+command = "cp -r . /app && uv sync --compile --python python3.13 --no-managed-python"
