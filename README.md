@@ -1,6 +1,6 @@
 # Python Wisp Server
 
-This is an implementation of a [Wisp](https://github.com/MercuryWorkshop/wisp-protocol) server, written in Python. It follows the Wisp v1 spec completely, including support for UDP connections.
+This is an implementation of a [Wisp](https://github.com/MercuryWorkshop/wisp-protocol) server, written in Python. It follows the Wisp v1 spec completely, including support for UDP connections. 
 
 ## Installation:
 ### Install From Source:
